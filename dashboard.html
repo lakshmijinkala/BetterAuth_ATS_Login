@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ATS — Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21.02 7 14.14 2 9.27l7.1-1.01L12 2z"/>
+          </svg>
+        </div>
+        <span class="logo-text">ATS</span>
+      </div>
+      <p class="card-title" id="welcome">Welcome!</p>
+      <p style="color: #6b7a8d; font-size: 14px;">You are now signed in.</p>
+    </div>
+  </div>
+<script>
+  // Ask Better Auth for the current session (the logged-in user)
+  async function loadSession() {
+    const res = await fetch("/api/auth/get-session", {
+      credentials: "include", // important: sends the session cookie
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.user) {
+        const name = data.user.name || data.user.email;
+        document.getElementById("welcome").textContent = `Welcome, ${name}!`;
+      }
+    } else {
+      // Not logged in — redirect back to login
+      window.location.href = "/login.html";
+    }
+  }
+
+  loadSession();
+</script>
+</body>
+</html>
