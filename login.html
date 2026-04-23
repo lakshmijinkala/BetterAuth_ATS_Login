@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS — Account Login</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21.02 7 14.14 2 9.27l7.1-1.01L12 2z"/>
+          </svg>
+        </div>
+        <span class="logo-text">ATS</span>
+      </div>
+
+      <!-- Title -->
+      <p class="card-title">Account Login</p>
+
+      <!-- Form -->
+      <div class="form">
+        <input
+          type="email"
+          id="email"
+          class="input-field"
+          placeholder="Email Address"
+          autocomplete="email"
+        />
+        <button class="btn-primary" onclick="handleLogin()">Send Link</button>
+      </div>
+
+      <hr class="divider" />
+
+      <p class="footer-text">
+        Don't have an account?&nbsp;<a href="signup.html">Sign up now</a>
+      </p>
+
+    </div>
+  </div>
+
+<script>
+  async function handleLogin() {
+    const email = document.getElementById("email").value.trim();
+    if (!email) { alert("Please enter your email."); return; }
+
+    const res = await fetch("/api/auth/sign-in/magic-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        callbackURL: "/dashboard.html",
+      }),
+    });
+
+    if (res.ok) {
+      alert("Magic link sent! Check your email inbox.");
+    } else {
+      const data = await res.json().catch(() => ({}));
+      // Better Auth returns a specific error code if the user doesn't exist
+      if (data.code === "USER_NOT_FOUND") {
+        alert("No account found. Please sign up first.");
+      } else {
+        alert("Error: " + (data.message || "Something went wrong."));
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
