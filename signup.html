@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS — Account Sign Up</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21.02 7 14.14 2 9.27l7.1-1.01L12 2z"/>
+          </svg>
+        </div>
+        <span class="logo-text">ATS</span>
+      </div>
+
+      <!-- Title -->
+      <p class="card-title">Account Sign Up</p>
+
+      <!-- Form -->
+      <div class="form">
+        <div class="input-row">
+          <input
+            type="text"
+            id="firstName"
+            class="input-field"
+            placeholder="First Name"
+            autocomplete="given-name"
+          />
+          <input
+            type="text"
+            id="lastName"
+            class="input-field"
+            placeholder="Last Name"
+            autocomplete="family-name"
+          />
+        </div>
+        <input
+          type="email"
+          id="email"
+          class="input-field"
+          placeholder="Email Address"
+          autocomplete="email"
+        />
+        <button class="btn-primary" onclick="handleSignUp()">Sign Up</button>
+      </div>
+
+      <hr class="divider" />
+
+      <p class="footer-text">
+        Already have an account?&nbsp;<a href="login.html">Sign in now</a>
+      </p>
+
+    </div>
+  </div>
+  
+<script>
+  async function handleSignUp() {
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName  = document.getElementById("lastName").value.trim();
+    const email     = document.getElementById("email").value.trim();
+
+    if (!firstName || !lastName || !email) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    // Better Auth's magic link endpoint — it auto-creates the user if they don't exist
+    const res = await fetch("/api/auth/sign-in/magic-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        name: `${firstName} ${lastName}`,   // used only for new users
+        callbackURL: "/dashboard.html",      // where to send them after clicking the link
+      }),
+    });
+
+    if (res.ok) {
+      alert("Account created! Check your email for a sign-in link.");
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert("Error: " + (data.message || "Something went wrong."));
+    }
+  }
+</script>
+
+</body>
+</html>
